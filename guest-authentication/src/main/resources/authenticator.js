@@ -51,6 +51,7 @@ let Auth = (() => {
             clientSessionId: context.clientSessionId,
           })
         ),
+        "X-Krista-Access-Token": context.extras && context.extras.accessToken
       };
     }
     return headers;

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>. 
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package app.krista.extensions.authentication.guest_authentication;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
         ecosystemId = "catEntryEcosystem_d3b05047-07b0-4b06-95a3-9fb8f7f608d9",
         ecosystemName = "Krista",
         ecosystemVersion = "3e7e09ed-688f-41fa-ab7c-ff879e750011")
-@Extension(implementingDomainIds = "catEntryDomain_db053e8f-a194-4dde-aa6f-701ef7a6b3a7", jaxrsId = "authn", requireWorkspaceAdminRights = true, name="Guest Authentication", version="3.5.7")
+@Extension(implementingDomainIds = "catEntryDomain_db053e8f-a194-4dde-aa6f-701ef7a6b3a7", jaxrsId = "authn", requireWorkspaceAdminRights = true, name="Guest Authentication", version="4.0.0-rc1")
 @StaticResource(path = "docs", file = "docs")
 public final class GuestAuthenticationExtension {
 

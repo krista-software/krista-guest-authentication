@@ -176,8 +176,8 @@ dependencies {
   implementation project(':base-authentication')
 
   // External dependencies
-  annotationProcessor 'app.krista:extension-impl-anno-processors:1.0.120'
-  compileOnly 'app.krista:krista-apis:1.0.120'
+  annotationProcessor 'app.krista:extension-impl-anno-processors:staging'
+  compileOnly 'app.krista:krista-apis:staging'
   compileOnly 'org.glassfish.hk2:hk2-api:2.6.1'
 
   // Test dependencies
@@ -187,7 +187,7 @@ dependencies {
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
   testImplementation 'org.mockito:mockito-core:5.5.0'
   testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
-  testImplementation 'app.krista:krista-apis:1.0.120'
+  testImplementation 'app.krista:krista-apis:staging'
   testImplementation 'org.glassfish.hk2:hk2-api:2.6.1'
   testImplementation 'com.google.code.gson:gson:2.10.1'
 }

@@ -29,7 +29,7 @@ jar {
 
 dependencies {
   // External dependencies
-  compileOnly 'app.krista:krista-apis:1.0.121-rc1'
+  compileOnly 'app.krista:krista-apis:staging'
   api 'com.opencsv:opencsv:5.9'
 
   // Test dependencies

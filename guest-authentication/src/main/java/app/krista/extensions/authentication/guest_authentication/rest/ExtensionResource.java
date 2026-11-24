@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>. 
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package app.krista.extensions.authentication.guest_authentication.rest;
@@ -45,6 +45,7 @@ import app.krista.extensions.authentication.guest_authentication.util.Constants;
 import app.krista.ksdk.accounts.Account;
 import app.krista.ksdk.accounts.ModifiableAccount;
 import app.krista.ksdk.authentication.AuthenticationSettings;
+import app.krista.ksdk.authentication.JwtSessionManager;
 import app.krista.ksdk.authentication.SessionManager;
 import app.krista.ksdk.authorization.Role;
 import app.krista.ksdk.context.AuthorizationContext;
@@ -66,6 +67,7 @@ public class ExtensionResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtensionResource.class);
 
     private final SessionManager sessionManager;
+    private final JwtSessionManager jwtSessionManager;
     private final AccountProvisioner accountProvisioner;
     private final RuntimeContext runtimeContext;
     private final GuestAuthenticationRoleManager guestAuthenticationRoleProvisioner;
@@ -78,12 +80,14 @@ public class ExtensionResource {
     private final AuthorizationContext authorizationContext;
 
     @Inject
-    public ExtensionResource(SessionManager sessionManager, AccountProvisioner accountProvisioner,
+    public ExtensionResource(SessionManager sessionManager, JwtSessionManager jwtSessionManager,
+                             AccountProvisioner accountProvisioner,
                              RuntimeContext runtimeContext, GuestAuthenticationRoleManager guestAuthenticationRoleProvisioner,
                              AuthenticationSettings authenticationSettings,
                              @Named("self") Invoker invoker, InvokerAttributeProvider<Double> sessionTimeout,
                              AccountManager accountManager, AuthorizationContext authorizationContext) {
         this.sessionManager = sessionManager;
+        this.jwtSessionManager = jwtSessionManager;
         this.accountProvisioner = accountProvisioner;
         this.runtimeContext = runtimeContext;
         this.guestAuthenticationRoleProvisioner = guestAuthenticationRoleProvisioner;
@@ -154,10 +158,11 @@ public class ExtensionResource {
         Account account = accountProvisioner.provisionAccount(email);
 
         String sessionId = sessionManager.createSession(account.getAccountId());
+        String accessToken = jwtSessionManager.createAccessTokenFromRefreshToken(sessionId);
         URI httpURI = resolveCallerUri(callerUri);
         // Safely get last 3 segments and join them with "/"
         String cookiePath = getCookiePath(httpURI);
-        AuthenticationResponse authenticationResponse = createAuthenticationResponse(account, sessionId);
+        AuthenticationResponse authenticationResponse = createAuthenticationResponse(account, sessionId, accessToken);
         accountManager.put(sessionId, authenticationResponse);
 
         // final boolean secure = true; // Change to false if not using HTTPS
@@ -298,7 +303,7 @@ public class ExtensionResource {
         CommonUtils.addSupportedDomainsToWorkspace(email, supportedDomainsForWorkspace, authenticationSettings);
     }
 
-    private AuthenticationResponse createAuthenticationResponse(Account account, String sessionId)
+    private AuthenticationResponse createAuthenticationResponse(Account account, String sessionId, String accessToken)
             throws AuthorizationException {
         return new AuthenticationResponse(sessionId, account.getPerson().getPersonName(),
                 account.getPerson().getAvatarUrl(), account.getAccountId(),
@@ -307,7 +312,7 @@ public class ExtensionResource {
                 guestAuthenticationRoleProvisioner.hasAdminRole(account),
                 false,
                 Map.of("email", account.getPrimaryEmailAddress()),
-                Map.of("creationTime", getCurrentDateTime(), "newSession", true));
+                Map.of("creationTime", getCurrentDateTime(), "newSession", true, "accessToken", accessToken));
     }
 
     private List<String> getListOfRoles(Set<Role> roles) {
